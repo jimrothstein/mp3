@@ -8,6 +8,13 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   *  GO BACK if sandbox tests not complete!
 ##
 ##
+
+##  regex
+{
+    ## *  0,1,n
+    ## ?  0,1
+    ## +  1,n
+}
 ##  work with file names as char[]
 {
   load_all()
@@ -20,6 +27,24 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   the_files
 }
 
+## BEFORE changing, LOOK if problems
+## AFTER changing, run again and expect character(0)
+{ ## 
+  problems <- function(pattern = NULL) {
+    # grep returns the index
+    p  <- grep(x=the_files, pattern=pattern)
+    print(the_files[p])
+  }
+
+  # p.1 first set of problems
+  p.1    <- problems(pattern="^NA")
+  the_files[p.1]
+
+  p.4  <- problems(pattern="[Jj]udith")
+  p.4
+}
+  
+
 
 { ## remove prefix
 
@@ -29,26 +54,39 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   # now remove prefix
   the_pattern = "^[[:digit:]]{1,6}_"
   the_files  <- remove_prefix(the_files, pattern = the_pattern)
+  the_files %>% head()
   the_files
 }
 
 
-  ## ?  LOT of ???? 
-    {
+## GREP, returns the index of match 
+{
       the_pattern  <- "\\?" 
-      # return index
       grep(x=the_files, pattern=the_pattern)
+      ## now display 
       the_files[grep(x=the_files, pattern=the_pattern)]
-    }
+}
 
 { ## remove some more!
 
-  # Any files now begin with  NA?
-   
+  ## any leadning `_`
+  p.5 <- problems(pattern="^_")
+  p.5
+  the_files  <- sub(x=the_files, pattern="^_+", replacement="")
   
+
+  # Any files now begin with  NA?
+  p.6 <- problems(pattern="^NA")
   # remove ^NA
   the_files  <- sub(x=the_files, pattern="^NA", replacement="") 
 
+  p.11  <- problems(pattern="\\?{1,}")
+  the_files  <- gsub(x=the_files, pattern = "\\?{1,}", replacement="_")
+  the_files
+
+  ## Any files with a blank space, tab ... (grep returns index)
+  p.2  <- grep(x=the_files, pattern="\\s+")
+  the_files[p.2]
   # remove empty space, but this is not GREEDY
   the_files  <- sub(x=the_files, pattern="\\s+", replacement="_")  
   the_files
@@ -58,44 +96,38 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   the_files
 
   # remove ugly "<sp>-<sp>"
+  p.7  <- problems(pattern = "_-_")
+  ## not greedy, run multiple or change to gsub
   the_files  <- sub(x=the_files, pattern="_-_", replacement="_")
   the_files
 
   # remove ugly "_~_"
+  p.8  <- problems(pattern = "_~_")
   the_files  <- sub(x=the_files, pattern="_~_", replacement="_")
   the_files
 
   # remove  "_.ogg"   BE smarter about this one!
+  p.9  <- problems(pattern = "_.ogg$")
   the_files  <- sub(x=the_files, pattern="_.ogg", replacement=".ogg")
   the_files
 
+  ## any ",_"
+  p.12  <- problems (pattern = ",_") 
+  the_files  <- gsub(x=the_files, pattern=",_", replacement="_")
+  
+
+  ## any files now with multiple "_", again  use gsub, for greedy
+  p.10  <- problems(pattern = "_{2,}")
+  the_files  <- gsub(x=the_files, pattern="_{2,}", replacement="_")
+
 }
 
+## View ... easiest way to check
+{ 
 
-
-{ ## LOOK for problem Patterns. 
-
-  problems <- function(pattern = NULL) {
-    p  <- grep(x=the_files, pattern=pattern)
-    print(the_files[p])
-  }
-
-  # p.1 first set of problems
-  p.1    <- problems(pattern="^NA")
-  
-  # spaces (1 space?)
-  p.2  <- grep(x=the_files, pattern="\\s+")
-  the_files[p.2]
-
-  # not working 
-  p.3  <- grep(x=the_files, pattern="(\\s+)+)")
-  the_files[p.3]
-
-  p.4  <- problems(pattern="[Jj]udith")
-  p.5 <- problems(pattern="^_")
-  p.6 <- problems(pattern="^NA")
+  View(the_files)
 }
-  
+
 
 
 
@@ -119,8 +151,14 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   NEW  <- the_files
   NEW
 
-  jimTools::rename_file_names(path=the_dir, from=OLD, to=NEW)
-  # check what is the disk
+  paste0(the_dir,"/",OLD)
+  paste0(the_dir,"/",NEW)
+
+  if (F) {
+  file.rename(from = paste0(the_dir,"/",OLD), 
+              to= paste0(the_dir,"/",NEW))
+  }
+
   list.files(the_dir)
   )
 }
