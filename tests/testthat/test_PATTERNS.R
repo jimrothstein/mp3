@@ -1,8 +1,8 @@
-# PURPOSE:   
+# TAGS:     sprintf, regex, mp3, DT,
 #
-# Collect patterns.  Many regex patterns with groupings and
-# foward/backward looks can be useful to changing mp3 files.  Organize these
-# and tips from !so  here.
+# PURPOSE:   Collect regex patterns.  
+# Including groupings; forward/backword; !so tips.
+# Examples:  useful for mp3 file names.
 #
 # TEST only on fake strings.  Don't use on mp3 till tested!
 #
@@ -29,22 +29,25 @@ dir()
 }
 
 
-{ ## working, sub
-  # sub(x = "_NA", pattern = "_NA", replacement = "NA")
-# list of strings, pattern, replacement when matches
-#
+{ ## sub
+
+## format
+    # sub(x = "_NA", pattern = "_NA", replacement = "NA")
+    # list of strings, pattern, replacement when matches
   #
-  #
-# multiple matching, need to use gsub
-f  <- function(e) {
-gsub(x = e[[1]],
-    pattern = e[[2]],
-    perl = F,
-    replacement = e[[3]])
+## multiple (greed matches)
+    ##
+    f  <- function(e) {
+    gsub(x = e[[1]],
+        pattern = e[[2]],
+        perl = F,
+        replacement = e[[3]])
 
 }
 
 
+####  Examples, simple
+{
 l  <- list(c("A,B,C,D", "((?:[[:upper:]]+)+),?", "\\1_"))
 l  <- list(
            c(the_phrase,
@@ -67,7 +70,7 @@ lapply(l, f)
 }
 
 {
-the_phrase  <-"_ End of The World - Skeeter Davis Live_08Sep2020_.ogg" 
+the_phrase  <-"_  End of The World - Skeeter Davis Live_08Sep2020_.ogg" 
 
 gsub(the_phrase, pattern = " ", replacement ="_")
 gsub(the_phrase, pattern = "\\s+", replacement = "_")
@@ -88,6 +91,9 @@ gsub(the_phrase, pattern = "(\\s+)", replacement = "_") %>% gsub(pattern="_-_", 
 
 
 }
+
+
+#### Working with file paths
 {
   val  <- "~/My_Files/F0/F1/F2/0b27ea5fad61c99d/0b27ea5fad61c99d/2015-04-1-04-25-12-925" 
 
@@ -171,7 +177,53 @@ pat  <-  "([[:digit:]]{4})_([[:digit:]]{2})_([[:digit:]]{2})"
 }
 
 
+
+####    precedes (?<=)
+{
+#  letter o (1 or more) preceded by f 
+    x  <- c("foo","boo", "faa", "fstool", "fo", "foooo")
+    grep(x, pattern="(?<=f)(o+)", value = T, perl=T)
+
+    sub(x=x, pattern="(?<=f)(o+)", replacement="X", perl=T)
+}
+
+  x  <- "foo"
+  sub(x=x, pattern="(f)(o+)", replacement="\\1_\\2_")
+
+## see rmd/..regex.. examples in try project
+## remove _NA_
+    x  <- "_xyz_NA_abc" 
+  sub(x=x, pattern="(?<=_)(NA_+)", replacement="\\2", perl=T, fixed=F)
+
+
+#### letter o (1 or more) preceded by f, replace with group
+  sub(x=x, pattern="(?<=f)(o+)", replacement="\\1", perl=T, fixed=F)
+  sub(x=x, pattern="(?<=f)(o+)", replacement="\\2", perl=T, fixed=F)
+  sub(x=x, pattern="(?<=f)(o+)", replacement="\\3", perl=T, fixed=F)
    
+#### match all puncutation
+  {
+      ## for regex, use fixed = F (default)
+      ## for string match, fixed = T
+      ##
+      f  <- function(string = NULL, pattern = NULL){
+          gsub(x = string, pattern = pattern, replacement = "", perl=T, fixed=F)
+      }
+
+      ## Examples:
+      f("JAR", pattern="J")
+      f(string = "~!@#$%^&*()_+)", pattern = "[[:punct:]]" )
+
+      ## remove everything (including SP) EXCEPT alpha, ' /
+      ans  <- f(string = "/ABD'-+?:;{}[]<>~!^@#$%^&*()_+)", 
+        pattern = "[^A-Za-z///' ]" )
+
+      tinytest::expect_identical(ans, "/ABD'")
+# ----- PASSED      : <-->
+#  call| tinytest::expect_identical(ans, "/ABD'") 
+
+}
+
 ## sprintf has some nice features!
 {
 sprintf("hello %s", "jim")

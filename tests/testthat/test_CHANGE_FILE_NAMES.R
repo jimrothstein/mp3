@@ -1,7 +1,9 @@
 file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
+#   TAGS:  tinytest,
 
 
 ## PURPOSE:   test rename files in sandbox
+## USES:  tinytest
 ## setup
 ## create tmpdir and empty tempfile
 ##
@@ -51,6 +53,41 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 { ## prepare new index
    the_prefix <- create_new_prefix(the_files, digits=4)
 the_prefix
+}
+
+#### experiment - another way to prepare new index
+{
+    # 10 names (character vector)
+    names  <- letters[1:10]
+    names
+
+    prefix  <- 90:99
+    prefix
+    prefix  <- sprintf("%04i_", prefix) 
+    prefix
+
+    ## seems to work
+    ## names and prefix are character vectors of same length
+    paste0(prefix, names)
+
+
+    ## now wit functions
+    f  <- function(names = NULL) {
+
+        function(prefix = NULL){
+            prefix  <- sprintf("%04i_", prefix) 
+            paste0(prefix, names)
+        } 
+    }
+    g  <- f(names)
+    g(90:99) # works
+
+    ## yikes (I think g is vectorized with all names; try re-writing f using just
+    ## one `name` at a time)
+    sapply(90:99, g)
+
+    ## fails
+    purrr::map_chr(90:99, g)
 }
 
 { ## attach new index

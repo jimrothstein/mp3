@@ -2,10 +2,12 @@
 file <- "tests/testthat/test_MP3_TESTING.R"
 
 ## PURPOSE:   
-  *  Actual mp3 files.
+  *  Actual mp3 files. 
+  *  Can TEST all you want.
   *  But do not write back to disk.
   *  NO SANBOX here.
   *  GO BACK if sandbox tests not complete!
+  *  WRITE?   ONLY very last step.
 ##
 ##
 
@@ -35,11 +37,20 @@ file <- "tests/testthat/test_MP3_TESTING.R"
     p  <- grep(x=the_files, pattern=pattern)
     print(the_files[p])
   }
+}
 
+
+    ## two examples
+{
   # p.1 first set of problems
   p.1    <- problems(pattern="^NA")
   the_files[p.1]
+}
 
+    ## double check: (Success means there are NO ^NA files)
+    tinytest::expect_equal(character(0),the_files[p.1])
+
+{
   p.4  <- problems(pattern="[Jj]udith")
   p.4
 }
@@ -120,7 +131,17 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   p.10  <- problems(pattern = "_{2,}")
   the_files  <- gsub(x=the_files, pattern="_{2,}", replacement="_")
 
+  ## TODO
+  ## Files that DO NOT begin with proper prefix
+  p.13  <- problems(pattern = "^[[:digit:]]{2,6}")
+
+  ## Files that contain ' , convert to _
+  p.14  <- problems(pattern = "'")
+  ## change
+  the_files  <- gsub(x=the_files, pattern="'", replacement="_")
+  the_files
 }
+
 
 ## View ... easiest way to check
 { 
@@ -151,9 +172,11 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   NEW  <- the_files
   NEW
 
+  ## check
   paste0(the_dir,"/",OLD)
   paste0(the_dir,"/",NEW)
 
+  ## returns T if renamed
   if (F) {
   file.rename(from = paste0(the_dir,"/",OLD), 
               to= paste0(the_dir,"/",NEW))
