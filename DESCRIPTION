@@ -11,10 +11,10 @@ Description: Tools to fix mp3 file names.
 License: What license it uses
 Encoding: UTF-8
 LazyData: true
-Suggests:   
+Suggests: 
     tinytest,
     knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: 
     rmarkdown,
     lubridate,

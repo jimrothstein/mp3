@@ -1,9 +1,7 @@
 
 #' save_old_names
-#' @description
-#'  safely save copy of original files in separate environmentt
-#' @param 
-#'   the_files Unchanged character vector of file names as read from
+#' @description safely save copy of original files in separate environmentt
+#' @param the_files Unchanged character vector of file names as read from
 #' drive.
 #' @export
 save_old_names  <- function(the_files = NULL) {
@@ -11,6 +9,15 @@ save_old_names  <- function(the_files = NULL) {
   e$the_files  <- the_files
 }
 
+#'  get_file_names
+#'  @description Returns dt, with file names and file size in MB
+#'  @export
+get_file_names  <- function() {
+    the_dir  <- "~/mp3_files"
+    the_files  <- list.files(path="~/mp3_files", full.names=T)
+    ## 1MB = 2^20 (= 1,048,576) 
+    dt  <- data.table(name = the_files, size = file.size(the_files)/2^20)
+    }
 
 
 #'  remove_prefix

@@ -1,16 +1,18 @@
 # TAGS:     sprintf, regex, mp3, DT,
 #
-# PURPOSE:   Collect regex patterns.  
-# Including groupings; forward/backword; !so tips.
-# Examples:  useful for mp3 file names.
+# PURPOSE:   Collect regex patterns with R.
+#            * Practice with Simple strings and regex with R
+#            * May use Read-only file names, matching
+#               Including groupings; forward/backword; !so tips.
+#            * To practice REGEX, grep, sed:  SEE zsh_scripts, HERE:  R only.
 #
+# CAUTION:   Nothing in this file should WRITE file names to disk. 
 # TEST only on fake strings.  Don't use on mp3 till tested!
 #
 #
 # file <- "tests/testthat/test_PATTERNS.R###  Change file names, add/remove prefix, use `base R`"
 #
-load_all()
-{
+```
 Main idea is this:
   * Set dir, 
   * Choose pattern to match files
@@ -20,33 +22,49 @@ Main idea is this:
   * file.rename(old, new)
 
 #### base:: comands
-file.rename()
+file.rename()   # NO WRITING in this file!
 file.create()
 basename()
 dirname()
 list.dirs()
 dir()
+```
+
+#### setup
+{
+
+    load_all()
+    library(tinytest)
+    library(data.table)
 }
 
+{
+dt  <- data.table(x=letters[1:5], y=letters[1:5])
+dt  <- data.table(str=list(c("A,B,C,D"), c("A", "B")),
+                  pattern = list("((?:[[:upper:]]+)+),?", 
+                                 "[[:upper:]]")
+                  replacement=list("\\1_" , 
+                                   "-"))
+dt
 
-{ ## sub
+f  <- function(x, y, z) {
+    gsub(x, pattern=y, replacement=z)
+}
 
-## format
-    # sub(x = "_NA", pattern = "_NA", replacement = "NA")
-    # list of strings, pattern, replacement when matches
-  #
-## multiple (greed matches)
-    ##
+dt[, .(new = mapply(f, x=str,pattern, replacement))]
+}
+
+####  gsub, multiple
+{
     f  <- function(e) {
-    gsub(x = e[[1]],
+        gsub(x = e[[1]],
         pattern = e[[2]],
         perl = F,
         replacement = e[[3]])
-
 }
 
 
-####  Examples, simple
+####  GSUB EXAMPLES, simple  |x = string | pattern = regex | replacement
 {
 l  <- list(c("A,B,C,D", "((?:[[:upper:]]+)+),?", "\\1_"))
 l  <- list(
@@ -69,6 +87,7 @@ l  <- list(
 lapply(l, f)
 }
 
+#### GSUB Examples, longer strings
 {
 the_phrase  <-"_  End of The World - Skeeter Davis Live_08Sep2020_.ogg" 
 
@@ -85,11 +104,7 @@ library(magrittr)
 gsub(the_phrase, pattern = "(\\s+)", replacement = "_") %>% gsub(pattern="_-_", replacement="_")
 
 
-
-
-/((?:\w+)+),?/gm
-
-
+##     /((?:\w+)+),?/gm
 }
 
 
@@ -112,9 +127,8 @@ gsub("([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/]*)/([^/][0-9a-z]+)/(.*)",
 # "\\6": Now substituting whole value of variable val with only 6th memory place which is actually required by OP to get the desired results.
 }
 
-{ ## VERSION .2   DT
-##
-library(rdatatable)
+#### VERSION .2   DT
+{ 
   create_dt  <- function () {
     DT = data.table(
       before = "_NA",
@@ -128,7 +142,20 @@ dt  <- create_dt()
 dt
 }
 
-{ ## a few real mp3 file names to practice  
+#### More Complicated grep -P
+{
+x  <- "XSeekers._ SeekersZ"
+pattern  <- "(Seekers)(.*)\\1"
+grep(pattern, x, perl=T, value=T)
+
+
+## Files
+x  <- list.files("~/mp3_files")    
+
+
+}
+#### a few real mp3 file names to practice  
+{ 
   the_dir  <- "~/mp3_files"
   head(list.files(the_dir))
 # [1] "_ End of The World - Skeeter Davis Live_08Sep2020_.ogg"                                   
@@ -141,12 +168,15 @@ dt
 
 
 
-## available patterns
+#### Match file names 
 {
-#  Choose pattern, 
 list.files("rmd", full.names= T, pattern="*.Rmd")
 list.files("./rmd", pattern="*.Rmd")
 list.files("./rmd", full.names = TRUE ,pattern="*.Rmd")
+}
+
+#### More Regex patterns
+{
 pat  <-  "^[:digit:]{4,6}"
 pat  <-  `^[[:digit:]]{4,6}`
 pattern=  "^[0-9]*"
@@ -224,7 +254,7 @@ pat  <-  "([[:digit:]]{4})_([[:digit:]]{2})_([[:digit:]]{2})"
 
 }
 
-## sprintf has some nice features!
+#### sprintf has some nice features!
 {
 sprintf("hello %s", "jim")
 

@@ -21,6 +21,7 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 {
   load_all()
   library(tinytest)
+  library(data.table)
 
   the_dir  <- "~/mp3_files"
   the_files  <- list.files(the_dir)
@@ -45,15 +46,18 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   # p.1 first set of problems
   p.1    <- problems(pattern="^NA")
   the_files[p.1]
+  p.2   <- problems(pattern="_NA_")
 }
 
     ## double check: (Success means there are NO ^NA files)
     tinytest::expect_equal(character(0),the_files[p.1])
 
 {
-  p.4  <- problems(pattern="[Jj]udith")
-  p.4
+  p.4  <- problems(pattern= "^[[:digit:]]{6}_")
+  p.4a  <- problems(pattern= "^[[:digit:]]{5}_")
+  p.5  <- problems(pattern="(\\w*)(.*)\\1)")
 }
+
   
 
 
