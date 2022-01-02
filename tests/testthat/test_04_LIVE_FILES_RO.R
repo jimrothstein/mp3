@@ -11,12 +11,6 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 ##
 ##
 
-##  regex
-{
-    ## *  0,1,n
-    ## ?  0,1
-    ## +  1,n
-}
 ##  work with file names as char[]
 {
   load_all()
@@ -25,10 +19,18 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 
   the_dir  <- "~/mp3_files"
   the_files  <- list.files(the_dir)
-  # save
-  OLD  <- the_files
-  the_files
+## save
+    OLD  <- the_files
+    the_files
 }
+
+##  Put into data.table
+{
+    dt  <- get_file_names()
+
+}
+dt
+dt |> head()
 
 ## BEFORE changing, LOOK if problems
 ## AFTER changing, run again and expect character(0)
@@ -38,15 +40,23 @@ file <- "tests/testthat/test_MP3_TESTING.R"
     p  <- grep(x=the_files, pattern=pattern)
     print(the_files[p])
   }
-}
 
 
-    ## two examples
+
 {
   # p.1 first set of problems
   p.1    <- problems(pattern="^NA")
   the_files[p.1]
+
+
+
+
+  # character vecctor
   p.2   <- problems(pattern="_NA_")
+
+  #  as data.table
+  dt[d.1  <- grepl(x=the_files, pattern="_NA_")]
+  dt[grepl(x=the_files, pattern= "^[[:digit:]]{5}_")]
 }
 
     ## double check: (Success means there are NO ^NA files)
