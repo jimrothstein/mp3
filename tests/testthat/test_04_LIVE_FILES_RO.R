@@ -11,6 +11,8 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 ##
 ##
 
+
+
 ##  work with file names as char[]
 {
   load_all()
@@ -31,6 +33,12 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 }
 dt
 dt |> head()
+
+dt1  <- setkey(dt, size)
+str(dt1)
+tables()
+View(dt1[order(-size)])
+dt1 |> head()
 
 ## BEFORE changing, LOOK if problems
 ## AFTER changing, run again and expect character(0)
@@ -54,9 +62,20 @@ dt |> head()
   # character vecctor
   p.2   <- problems(pattern="_NA_")
 
-  #  as data.table
-  dt[d.1  <- grepl(x=the_files, pattern="_NA_")]
+  ### Use data.table
+  {
+  #  as data.table, returns only rows that match pattern
+  View(dt[d.1  <- grepl(x=the_files, pattern="_NA_")])
+  dt[, .(new = sub(x=names, pattern="_NA_", replacement="_"))]
+
+  # add new col with change:
+  f  <- function(e) sub(x=e, pattern="_NA_", replacement="_")
+  dt[, .(name,new = sapply(name, f))] |> View()
+
+
+  
   dt[grepl(x=the_files, pattern= "^[[:digit:]]{5}_")]
+  }  
 }
 
     ## double check: (Success means there are NO ^NA files)
