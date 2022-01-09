@@ -20,6 +20,8 @@ library(kableExtra)
     dirname()
     list.dirs()
     dir()
+
+    #list.files(<dir>)
     }
 }
 

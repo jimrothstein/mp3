@@ -1,6 +1,6 @@
 Package: mp3 
 Title: mp3 tools
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: 
     person(given = "jim",
            family = "Last",
@@ -19,5 +19,8 @@ Imports:
     rmarkdown,
     lubridate,
     DT,
-    xfun
+    xfun,
+    jimTools,
+    data.table
+
 VignetteBuilder: knitr

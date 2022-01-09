@@ -10,7 +10,8 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 {
   load_all()
   library(tinytest)
-  the_dir  <- create_sandbox()
+  library(data.table)
+  the_dir  <- jimTools::create_sandbox()
   the_dir
 
   # expect empty
@@ -24,21 +25,54 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 {
 ##  populate sandbox with files
 
-  tinytest::expect_silent(the_files  <- populate_sandbox(the_dir))
-  the_files
+  # get_files
+    the_files  <- get_file_names()
+        
+    # save original names
+    #   
+    OLD  <- the_files
 
-  # for testing, give only basename
-  the_files  <- basename(the_files)
-  the_files
+    ls.str(the_files)
+    head(the_files)
 
-  # save original names
-  OLD  <- the_files
+    # for our purposes here, need only base name column
+    the_files[, size := NULL]
+    the_files
 
-  # we aleady have the_dir, when record the dirname when rename files
-  the_dir
+    ##  in-place, keep only basename
+    the_files[, name := sapply(name, basename)]
+
+
+    
+  # TRUE means, file was created in the_dir
+  tinytest::expect_silent(the_files  <- jimTools::populate_sandbox(the_dir,the_files$name))
+
+  ## list - At this point:  we have sandbox, populated by just the names of
+  ## files
+  list.files(the_dir)
 }
 
+{
+    ## create dt with all the file names in tmp directory
+    dt  <- data.table(name = list.files(the_dir))
+    dt
+        
+    ##  begin cleanup!
+    ##
+    dt[, name := sapply(name, sub, pattern="_NA_", replacement="_")]
+    dt[, name2 := sapply(name, gsub, pattern="~", replacement="_")]
+    View(dt)
 
+    
+
+
+
+
+
+}
+#--------
+# LEGACY
+#--------
 { ## remove prefix
 
   # first do nothing
