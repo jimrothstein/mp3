@@ -109,4 +109,3 @@ library(kableExtra)
 
     dt[, .N, by=size]
 
-

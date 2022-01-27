@@ -36,6 +36,7 @@ dir()
     load_all()
     library(tinytest)
     library(data.table)
+    library(magrittr)
 }
 
 {
@@ -100,7 +101,7 @@ gsub(the_phrase, pattern = "\\s+-\\s+", replacement = "_")
 #
 #
 ## can chain !!
-library(magrittr)
+
 gsub(the_phrase, pattern = "(\\s+)", replacement = "_") %>% gsub(pattern="_-_", replacement="_")
 
 

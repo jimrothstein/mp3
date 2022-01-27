@@ -2,7 +2,7 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 #   TAGS:  tinytest,
 
 
-## PURPOSE:   test rename files in sandbox
+## PURPOSE:   Test Renaming files in sandbox
 ## USES:  tinytest
 ## setup
 ## create tmpdir and empty tempfile
@@ -11,6 +11,7 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
   load_all()
   library(tinytest)
   library(data.table)
+  library(kableExtra)
   the_dir  <- jimTools::create_sandbox()
   the_dir
 
@@ -25,7 +26,7 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 {
 ##  populate sandbox with files
 
-  # get_files
+  # get_files, as DT (TODO add check)
     the_files  <- get_file_names()
         
     # save original names
@@ -52,15 +53,26 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
   list.files(the_dir)
 }
 
+## Work with /tmp/X, which now  has the names of mp3 files
 {
     ## create dt with all the file names in tmp directory
     dt  <- data.table(name = list.files(the_dir))
     dt
+
+    ##  for testing, use subset
+    dt  <- dt[1:20]
+    dt
         
     ##  begin cleanup!
     ##
-    dt[, name := sapply(name, sub, pattern="_NA_", replacement="_")]
-    dt[, name2 := sapply(name, gsub, pattern="~", replacement="_")]
+    dt[, name2 := sapply(name, sub, pattern="_NA_", replacement="_")]
+    dt[, name3 := sapply(name2, gsub, pattern="~", replacement="_")]
+    dt[, name4 := sapply(name3, gsub, pattern="_&_", replacement="_and_")] 
+    dt[,       name2 := NULL]
+
+    ## remove annoying single quotes
+    dt[, name5 := sapply(name4, gsub, pattern="'", replacement="_")] 
+    dt[, name3 := NULL]
     View(dt)
 
     
@@ -70,6 +82,38 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 
 
 }
+
+#### Alternative to previous: Use chain of gsub() |>  on dt$name
+{
+
+    ## create dt with all the file names in tmp directory
+    dt  <- data.table(name = list.files(the_dir))
+    dt
+
+    ##  for testing, use subset
+    dt  <- dt[1:200]
+    dt
+        
+    ##  begin cleanup!
+    dt$name2  <- gsub(dt$name, pattern = "_NA_", replacement = "_") |>
+        gsub(pattern = "~", replacement = "_") |>
+
+        # FIX:  this also does:  don't ==>  don_t
+        gsub(pattern = "'", replacement = "_") 
+
+    dt
+
+{
+    kbl(dt, booktabs="T") |> 
+    ## looks smaller than 12 !
+    kable_styling(full_width=F, font_size=12) |>
+    column_spec(1, width="40em") |>
+    column_spec(2, bold=F, color="red") 
+}
+
+}
+
+{
 #--------
 # LEGACY
 #--------

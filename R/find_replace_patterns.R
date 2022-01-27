@@ -19,6 +19,15 @@ get_file_names  <- function() {
     dt  <- data.table(name = the_files, size = file.size(the_files)/2^20)
     }
 
+#'  get_base_name
+#'  @description Remove any path information and return base filename and
+#'  extension.
+#'  @example
+#'  # DT[, name := sapply(name, get_base_name)]
+#'  @export
+## return base name only
+    get_base_name  <- function(e) {basename(e)}
+
 
 #'  remove_prefix
 #'

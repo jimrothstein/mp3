@@ -1,0 +1,131 @@
+---
+title: "`r knitr::current_input()`"
+date: "`r paste('last updated', 
+    format(lubridate::now(), ' %d %B %Y'))`"
+output:   
+  pdf_document:   
+    latex_engine: lualatex  
+    toc: true
+    toc_depth:  4   
+    keep_tex:  true
+  html_document:  
+        code_folding: show
+        toc: true 
+        toc_depth: 4
+        toc_float: true
+        mathjax: default
+  header-includes:  
+    -  \usepackage{helvet}  
+    -  \renewcommand{\familydefault}{\sfdefault}  
+    -  \usepackage{ulem}
+    -  \usepackage{booktabs}
+    -  \usepackage{longtable}
+    -  \usepackage{array}
+    -  \usepackage{multirow}
+    -  \usepackage{wrapfig}
+    -  \usepackage{float}
+    -  \usepackage{colortbl}
+    -  \usepackage{pdflscape}
+    -  \usepackage{tabu}
+    -  \usepackage{threeparttable}
+    -  \usepackage{threeparttablex}
+    -  \usepackage[normalem]{ulem}
+    -  \usepackage{makecell}
+    -  \usepackage{xcolor}
+fontsize: 11pt   
+geometry: margin=0.4in,top=0.25in   
+TAGS:  skeleton
+---
+\tiny{~/code/MASTER_INDEX.md} 
+
+```{r setup, include=FALSE		}
+knitr::opts_chunk$set(echo = TRUE,
+                      comment = "      ##",
+                      error = TRUE,
+                      collapse = T   ) # T easier to read
+
+```
+###    kableExtra printing
+
+####    print to pdf
+```{r pdf}
+
+load_all()
+library(jimTools)
+library(kableExtra)
+library(data.table)
+```
+
+####    pdf:  mtcars
+```{r mtcars, eval=T, include=T}
+
+if (F) {
+
+    kbl(mtcars[1:10,], booktabs=T, caption="table 2" , linesep = "") |>
+    kable_styling(latex_options = c("striped", "font-size=7"))
+
+    kbl(mtcars, caption="table I" , linesep = " ") |>
+    kable_styling(latex_options = c("striped", "scale_down"))
+
+    kbl(mtcars, caption="table I" , linesep = " ", booktabs=T) |>
+    kable_styling(latex_options = c("striped", "font-size=7"))
+}
+```
+####    pdf dt
+```{r pdf_dt}
+
+
+## somehow this works WITHOUT knitr
+## fyi,  latex has nice footnotesize (prefix with backslash)
+
+if (F) {
+dt  <- get_file_names()
+dt[, name := sapply(name, get_base_name)]
+
+{
+    kbl(dt[1:20], booktabs="T") |> 
+    ## looks smaller than 12 !
+    kable_styling(full_width=F, font_size=12) |>
+    column_spec(1, width="40em") |>
+    column_spec(2, bold=F, color="red") 
+}
+
+}
+```
+
+
+
+```{r html, include=F}
+# dt |> kable_styling(position="left")
+
+
+
+##  html
+##  row #471 has not utf-8 
+ #   kbl(dt[1:20])
+
+ #   kbl(dt[1:20], booktabs="T")
+
+```
+
+
+
+
+```{r render, eval=FALSE, include=FALSE 	} 
+output_dir  <- Sys.getenv("OUTPUT_DIR")
+output_dir
+
+{
+file <- "tests/testthat/test_05_PRINT.rmd"
+file  <-  normalizePath(file)
+file
+}
+
+
+rmarkdown::render(file,
+                  #output_format="html_document",
+                  output_format="pdf_document",
+                  output_dir=output_dir
+                  )
+# tinytex::lualatex("~/Downloads/print_and_delete/test_05_PRINT.tex")
+```
