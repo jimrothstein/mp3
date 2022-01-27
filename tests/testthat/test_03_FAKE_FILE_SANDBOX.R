@@ -19,8 +19,6 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
   # tinytest::expect_
   tinytest::expect_silent(list.files(the_dir), info="files created")
   print(tinytest::expect_silent(list.files(the_dir)))
-  
-
 }
 
 {
@@ -53,56 +51,37 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
   list.files(the_dir)
 }
 
-## Work with /tmp/X, which now  has the names of mp3 files
+
+##  begin clean-up
+##  ][ is effectively data.table method of chaining, without %>%
 {
-    ## create dt with all the file names in tmp directory
     dt  <- data.table(name = list.files(the_dir))
-    dt
-
-    ##  for testing, use subset
-    dt  <- dt[1:20]
-    dt
-        
-    ##  begin cleanup!
-    ##
-    dt[, name2 := sapply(name, sub, pattern="_NA_", replacement="_")]
-    dt[, name3 := sapply(name2, gsub, pattern="~", replacement="_")]
-    dt[, name4 := sapply(name3, gsub, pattern="_&_", replacement="_and_")] 
-    dt[,       name2 := NULL]
-
-    ## remove annoying single quotes
-    dt[, name5 := sapply(name4, gsub, pattern="'", replacement="_")] 
-    dt[, name3 := NULL]
-    View(dt)
-
-    
-
-
-
-
-
-}
-
-#### Alternative to previous: Use chain of gsub() |>  on dt$name
-{
-
-    ## create dt with all the file names in tmp directory
-    dt  <- data.table(name = list.files(the_dir))
-    dt
 
     ##  for testing, use subset
     dt  <- dt[1:200]
     dt
-        
-    ##  begin cleanup!
-    dt$name2  <- gsub(dt$name, pattern = "_NA_", replacement = "_") |>
-        gsub(pattern = "~", replacement = "_") |>
 
-        # FIX:  this also does:  don't ==>  don_t
-        gsub(pattern = "'", replacement = "_") 
+    dt[, old_name := name
+       ][, name := sub(name, pattern = "^[[:digit:]]{5,6}", replacement =  "")
+       ][, name := gsub(name, pattern = "_NA_", replacement = "_")
+       ][, name := gsub(name, pattern = "~", replacement = "_")
+       ][, name := gsub(name, pattern = "'", replacement = "_") 
+       ][, name := gsub(name, pattern = "~", replacement = "_")
+       ][, name := gsub(name, pattern = "_&_", replacement = "_and_")]
 
-    dt
+## prepare new index &  attach
+{ 
+   the_prefix <- create_new_prefix(the_files, digits=4)
+   the_prefix  <- the_prefix[1:200] # testing
 
+    dt[, name := paste0(the_prefix, name)]
+    View(dt)
+}
+
+
+
+
+##  printing   
 {
     kbl(dt, booktabs="T") |> 
     ## looks smaller than 12 !
@@ -113,32 +92,10 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 
 }
 
+
+
+## another way to prefix
 {
-#--------
-# LEGACY
-#--------
-{ ## remove prefix
-
-  # first do nothing
-  remove_prefix(the_files, pattern="")
-
-  # now remove prefix
-  the_pattern = "^[[:digit:]]{1,2}_"
-  the_files  <- remove_prefix(the_files, pattern = the_pattern)
-  the_files
-}
-
-{ ## prepare new index
-   the_prefix <- create_new_prefix(the_files, digits=4)
-the_prefix
-}
-
-#### experiment - another way to prepare new index
-{
-    # 10 names (character vector)
-    names  <- letters[1:10]
-    names
-
     prefix  <- 90:99
     prefix
     prefix  <- sprintf("%04i_", prefix) 
@@ -164,16 +121,7 @@ the_prefix
     ## one `name` at a time)
     sapply(90:99, g)
 
-    ## fails
-    purrr::map_chr(90:99, g)
 }
-
-{ ## attach new index
-  the_files <- attach_new_prefix(the_files, prefix=the_prefix)
-  the_files
-}
-
-
 
 
 {  ##  NEW and OLD
