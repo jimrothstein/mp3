@@ -2,6 +2,7 @@
 file <- "tests/testthat/test_MP3_TESTING.R"
 
 ## PURPOSE:   
+-	Use list, the_files;   NOT DT
   *  Actual mp3 files. 
   *  Can TEST all you want.
   *  But do not write back to disk.
@@ -62,9 +63,13 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   }
 
 }
-problems("abc")
-problems("^_")
+##	tests
+{
+	problems("abc")
+	problems("^_")
+}
 
+##	BEGIN
 {
   # p.1 first set of problems
   p.1    <- problems(pattern="^NA")
@@ -118,7 +123,7 @@ problems("^_")
 }
 
 
-## GREP, returns the index of match 
+## GREP, contains `?`, returns the index of match 
 {
       the_pattern  <- "\\?" 
       grep(x=the_files, pattern=the_pattern)
@@ -132,12 +137,14 @@ problems("^_")
   p.5 <- problems(pattern="^_")
   p.5
   the_files  <- sub(x=the_files, pattern="^_+", replacement="")
+	the_files
   
 
   # Any files now begin with  NA?
   p.6 <- problems(pattern="^NA")
   # remove ^NA
   the_files  <- sub(x=the_files, pattern="^NA", replacement="") 
+	the_files
 
   p.11  <- problems(pattern="\\?{1,}")
   the_files  <- gsub(x=the_files, pattern = "\\?{1,}", replacement="_")
