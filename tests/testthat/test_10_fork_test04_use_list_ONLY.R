@@ -25,6 +25,7 @@
 	-	return atomic vector files meeting the criteria
 	- print this to console
 	- also print, using glue::glue, the total number
+- remove prefix,  do not want to remove  `1948_Dorth ...` (^0, use lookahead)
 
 
 
@@ -82,20 +83,6 @@
 
 
 
-##	40 First set of problems	
-
-##	Next, `_NA_`
-{
-	   
-  problems(pattern="_NA_")
-  p.2   <- problems(pattern="_NA_")
-	tinytest::expect_equal(problems(pattern="_NA_"),p.2)
-
-}
-
-}
-
-
 
 ------------------------
 100_find all the problems
@@ -104,18 +91,27 @@
 
 {
 
-  p.1    <- problems(pattern="^NA")
+  p.1    <- problems(pattern="^NA") 
+  p.1
+	p.1 |> length() 
+
   p.2   <- problems(pattern="_NA_")
+	p.2
+	p.2 |> length()
+
 	p.3   <- problems(pattern="\\s+") 
+
   p.4  <- problems(pattern= "^[[:digit:]]{6}_")
   p.4a  <- problems(pattern= "^[[:digit:]]{5}_")
 
   p.5 <- problems(pattern="^_")
-
-	problems(pattern="'")	 
-
+  p.5
+  p.5 |> length()
 
   p.8  <- problems(pattern = "_~_")
+	p.8
+	p.8 |> length()
+
 	problems(pattern="~")
 	# one or more
 	problems(pattern="~+")
@@ -127,6 +123,9 @@
 	# one or more whitespace char
 	problems(pattern="\\s+")
 
+
+	p.23  = problems(pattern="'")	 
+	problems(pattern="'") |> length()
 
 	#	ugly {dir}   braces are meta char
 	p.30 =problems(pattern="\\{dir\\}")
@@ -153,14 +152,9 @@
 
 
 
+#-----------------------------
 ##	Next step, remove problems
-
-  
-
-
-{ ## remove prefix
-
-}
+#-----------------------------
 
 
 ## GREP, contains `?`, returns the index of match 
@@ -220,17 +214,22 @@
 
 { ## remove some more!
 
+##	leading digits
+##
 ## -----------------------------------
 {
-	## careful,  some numbers are needed and NOT prefix
-  # now remove prefix
+	##	too broad; captures `1946_Dorothy_Shay...`
+	if (F){
   the_pattern = "^[[:digit:]]{1,6}_"
 	problems(pattern=the_pattern)
+	}
 
 
+	##	Use look aheads!
 	##	safer to insist 6 digits and first is zero
 	##	then, insist 5 digits and 1st is zero
-  the_pattern = "^[[:digit:]]{4,6}_"
+	##
+  the_pattern = "^[[:digit:]]{5,6}_"
 	problems(pattern=the_pattern)
 
 
@@ -273,6 +272,7 @@
 
 	# check:
   p.5 <- problems(pattern="^_+")
+	p.5
   tinytest::expect_equal(character(0),p.5)
   
 
@@ -346,11 +346,23 @@
 
 
 
+##	p.13 Remove prefix
 ##-----------------------------------
+	##
   ## TODO, careful .. not all digits are prefix
   ## Files that DO NOT begin with proper prefix
-  p.13  <- problems(pattern = "^[[:digit:]]{2,6}")
+	## For now, this is ok:
+	the_pattern = "^[[:digit:]]{5,6}"
+
+  p.13  <- problems(pattern = the_pattern)
 	p.13
+
+	# clean
+	the_files  <- sub(x=the_files, pattern=the_pattern, replacement="_")
+	the_files
+
+	# test
+	tinytest::expect_equal(character(0), problems(pattern = the_pattern))
 
 
 ##-----------------------------------
@@ -483,9 +495,10 @@
               to= paste0(the_dir,"/",NEW))
 	}
 
-	###	rename
+	###	do it; rename on drive
 	if(F){
 		file_rename(OLD,NEW)
+		# expect NOT equal
 		tinytest::expect_equal(OLD,NEW) 
 	}
 
@@ -497,6 +510,14 @@
   )
 }
 
+##-----------------------
+##		EXPERIMENTAL
+##
+##		Given a fresh list, the_files, LIST but do not change the `problems`
+
+	
+##-----------------------
+##
 ##-----------------------
 ##			L E G A C Y
 ##-----------------------
