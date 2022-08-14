@@ -30,15 +30,21 @@
 
 ##  000 - work with file names as char[]
 {
-  load_all()
+  #load_all()
   library(tinytest)
   library(data.table)
 	library(glue)
 	library(magrittr)
 
+
   the_dir  <- "~/mp3_files"
-  the_files  <- list.files(the_dir)
-	head(the_files)
+
+	#	use function
+	get_files = function(the_dir=the_dir){
+		list.files(the_dir)
+	}
+
+	the_files = get_files(the_dir)
 
 ##	make backup
     OLD  <- the_files
@@ -76,13 +82,7 @@
 
 
 
-##	40 First set of problems, p.1		
-{
-	problems(pattern="^NA")
-  p.1    <- problems(pattern="^NA")
-	p.1
-  the_files[p.1]
-}
+##	40 First set of problems	
 
 ##	Next, `_NA_`
 {
@@ -95,10 +95,6 @@
 
 }
 
-## double check: (Success means there are NO ^NA files)
-    tinytest::expect_equal(character(0),the_files[p.1])
-# ----- PASSED      : <-->
-#  call| tinytest::expect_equal(character(0), the_files[p.1]) 
 
 
 ------------------------
@@ -117,24 +113,20 @@
   p.5 <- problems(pattern="^_")
 
 	problems(pattern="'")	 
-	#	literal ?
-	problems(pattern="\\?")
 
 
   p.8  <- problems(pattern = "_~_")
 	problems(pattern="~")
 	# one or more
 	problems(pattern="~+")
+	##	any question marks?
+	problems(pattern="\\?")
 
 
-	# 1 or more ?
-  p.11  <- problems(pattern="\\?{1,}")
 
 	# one or more whitespace char
 	problems(pattern="\\s+")
 
-	# comma
-	problems(pattern=",")
 
 	#	ugly {dir}   braces are meta char
 	p.30 =problems(pattern="\\{dir\\}")
@@ -168,14 +160,6 @@
 
 { ## remove prefix
 
-  # first do nothing
-  remove_prefix(the_files, pattern="")
-
-  # now remove prefix
-  the_pattern = "^[[:digit:]]{1,6}_"
-  the_files  <- remove_prefix(the_files, pattern = the_pattern)
-  the_files %>% head()
-  the_files
 }
 
 
@@ -237,9 +221,37 @@
 { ## remove some more!
 
 ## -----------------------------------
+{
+	## careful,  some numbers are needed and NOT prefix
+  # now remove prefix
+  the_pattern = "^[[:digit:]]{1,6}_"
+	problems(pattern=the_pattern)
+
+
+	##	safer to insist 6 digits and first is zero
+	##	then, insist 5 digits and 1st is zero
+  the_pattern = "^[[:digit:]]{4,6}_"
+	problems(pattern=the_pattern)
+
+
+
+##-----------------------------------
+	problems(pattern="^NA")
+  p.1    <- problems(pattern="^NA")
+	p.1
+  the_files[p.1]
+
+## double check: (Success means there are NO ^NA files)
+    tinytest::expect_equal(character(0),the_files[p.1])
+# ----- PASSED      : <-->
+#  call| tinytest::expect_equal(character(0), the_files[p.1]) 
+
+}
+##-----------------------------------
+{
   ## Any files with a blank space, tab ... (grep returns index)
 	problems(pattern="\\s+")
-
+}
   p.3  <- grep(x=the_files, pattern="\\s+")
   the_files[p.3]
 
@@ -279,9 +291,39 @@
 
 
 ##-----------------------------------
+
+  # remove ugly "<sp>-<sp>"
+  p.7  <- problems(pattern = "_-_")
+	p.7
+  ## not greedy, run multiple or change to gsub
+  the_files  <- sub(x=the_files, pattern="_-_", replacement="_")
+  the_files
+
+##-----------------------------------
+  # remove ugly "_~_"
+  p.8  <- problems(pattern = "_~_")
+	p.8
+  the_files  <- sub(x=the_files, pattern="_~_", replacement="_")
+  the_files
+
+##-----------------------------------
+  # remove  "_.ogg"   BE smarter about this one!
+  p.9  <- problems(pattern = "_.ogg$")
+	p.9
+  the_files  <- sub(x=the_files, pattern="_.ogg", replacement=".ogg")
+  the_files
+
+##-----------------------------------
+  ## any files now with multiple "_", again  use gsub, for greedy
+  p.10  <- problems(pattern = "_{2,}")
+	p.10
+  the_files  <- gsub(x=the_files, pattern="_{2,}", replacement="_")
+##-----------------------------------
+	##  one or more `?` (question mark)
   p.11  <- problems(pattern="\\?{1,}")
 	p.11
 
+	## fix all
   the_files  <- gsub(x=the_files, pattern = "\\?{1,}", replacement="_")
   the_files
 
@@ -290,43 +332,58 @@
   tinytest::expect_equal(character(0),p.11)
 
 
-
-  # remove ugly "<sp>-<sp>"
-  p.7  <- problems(pattern = "_-_")
-  ## not greedy, run multiple or change to gsub
-  the_files  <- sub(x=the_files, pattern="_-_", replacement="_")
-  the_files
-
-  # remove ugly "_~_"
-  p.8  <- problems(pattern = "_~_")
-  the_files  <- sub(x=the_files, pattern="_~_", replacement="_")
-  the_files
-
-  # remove  "_.ogg"   BE smarter about this one!
-  p.9  <- problems(pattern = "_.ogg$")
-  the_files  <- sub(x=the_files, pattern="_.ogg", replacement=".ogg")
-  the_files
-
+##-----------------------------------
   ## any ",_"
   p.12  <- problems (pattern = ",_") 
+
+	p.12
   the_files  <- gsub(x=the_files, pattern=",_", replacement="_")
   
+	##	any `,` (comma) ?
+	problems(pattern=",")
+	the_files  <- gsub(x=the_files, pattern=",", replacement="_")
+	problems(pattern=",")
 
-  ## any files now with multiple "_", again  use gsub, for greedy
-  p.10  <- problems(pattern = "_{2,}")
-  the_files  <- gsub(x=the_files, pattern="_{2,}", replacement="_")
 
-  ## TODO
+
+##-----------------------------------
+  ## TODO, careful .. not all digits are prefix
   ## Files that DO NOT begin with proper prefix
   p.13  <- problems(pattern = "^[[:digit:]]{2,6}")
+	p.13
 
+
+##-----------------------------------
+
+
+	# BE SMARTER   can't 's  maybe NEED
   ## Files that contain ' , convert to _
   p.14  <- problems(pattern = "'")
+	p.14
   ## change
   the_files  <- gsub(x=the_files, pattern="'", replacement="_")
   the_files
 
+##-----------------------------------
+	##  files with German, `<fc>` or `<dc>`  seem to cause adb push to CHOKE
+	##  ` < >`   are NOT special  or metacharac
+	{	
 
+		p.16=problems(pattern="<.*>")
+		p.16
+
+		p.16  <- sub(x=p.16, pattern="<.*>" , replacement="_")
+		p.16
+
+		##	 for real.
+		the_files  <- sub(x=the_files, pattern="<.*>" , replacement="_")
+		
+		tinytest::expect_equal(character(0),problems(pattern="<.*>"))
+
+		
+
+
+	##
 	# p.30
 	{
 		# to perfect algorithm, find p.30 and work with it.
@@ -374,6 +431,10 @@
 
    tinytest::expect_equal(character(0),problems(x=the_files, pattern=the_pattern))
 	}
+
+##-----------------------------------
+###----------------------------------
+#
 ## View ... easiest way to check
 { 
 
@@ -396,31 +457,48 @@
 
 
 
+##	OLD & NEW same?
+{
+	tinytest::expect_identical(OLD, the_files)
+	
+}
 
 {  ##  rename:  OLD to NEW 
   if (F) (
   OLD
-	problems(x=OLD, pattern="^_+") #286
-
-	problems(x=the_files, pattern="^_+") #286
 
   NEW  <- the_files
   NEW
 
-  ## check
+	tinytest::expect_equal(length(OLD), length(NEW))
+
+  ## check:  last chance
   paste0(the_dir,"/",OLD)
   paste0(the_dir,"/",NEW)
 
-  ## returns T if renamed
-  if (F) {
-  file.rename(from = paste0(the_dir,"/",OLD), 
+	##	
+	file_rename  <- function(OLD,NEW){
+		## retruns T if 
+		file.rename(from = paste0(the_dir,"/",OLD), 
               to= paste0(the_dir,"/",NEW))
-  }
+	}
 
-  list.files(the_dir)
+	###	rename
+	if(F){
+		file_rename(OLD,NEW)
+		tinytest::expect_equal(OLD,NEW) 
+	}
+
+
+	## need to get updated the_files?
+	##
+	the_files  <- get_files(the_dir)
+	the_files
   )
 }
 
+##-----------------------
+##			L E G A C Y
 ##-----------------------
 
 ##	LEGACY, removed from above code (use dt or glue)
