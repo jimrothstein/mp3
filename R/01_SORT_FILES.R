@@ -1,5 +1,6 @@
 # TAGS:     sprintf, regex, mp3, DT,
 #
+# 
 # PURPOSE:   Sort mp3 file names, by name, by size
 # USE CASE:  Find dupicate files, histogram by size.
 #
@@ -26,10 +27,14 @@ library(kableExtra)
 }
 
 
-#### Assuming ~/mp3_files;  return dt with name and siz
+
+#### Return dt with file name and siz (default = ".")
 {
     dt  <- get_file_names()
     str(dt)
+    dput(dt)
+
+    dput(dt, control= c(NULL) )         ## return as list
     dt[, .N]
     dt |> head()
     # [1] 4077
@@ -37,7 +42,7 @@ library(kableExtra)
 
 
 
-## sort on size (displays all columns)
+#I# sort on size (displays all columns)
 {
     dt[order(-size)] |> View()
     dt[order(size)] |> View()
