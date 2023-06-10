@@ -12,9 +12,8 @@ License: What license it uses
 Encoding: UTF-8
 LazyData: true
 Suggests: 
-    tinytest,
     knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Imports: 
     rmarkdown,
     lubridate,
