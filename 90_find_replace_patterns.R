@@ -36,11 +36,13 @@ get_base_name <- function(e) {
 #'
 #' @description Remove any existing prefix according to pattern
 #'  May need multiple passes
-#' @param the_files character vector of all possible file names to be changed.
-#' @param pattern Select the files to change.
+#' @param files character vector of all possible file names to be changed.
+#' @param pattern pattern (or prefix) to remove if found
+#' @example
+#' # remove_prefix(files=, pattern=)
 #' @export
-remove_prefix <- function(the_files = NULL, pattern = pattern) {
-    sub(pattern = pattern, replace = "", x = the_files)
+remove_prefix <- function(files = NULL, pattern = NULL) {
+    sub(pattern = pattern, replace = "", x = files)
 }
 
 

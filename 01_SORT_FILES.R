@@ -7,9 +7,10 @@
 # THIS FILE:
 #   "tests/testthat/test_01_SORT_FILES.R#"
 {
-    #load_all()
+    # load_all()
     library(data.table)
     library(kableExtra)
+    source("./90_find_replace_patterns.R")
 }
 #### base:: comands REF
 {
