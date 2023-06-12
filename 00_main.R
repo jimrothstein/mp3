@@ -51,10 +51,15 @@ list.files(path=getwd(),
 
 ###     Given a prefix, return vector of names without prefix. 
 {
-the_prefix = "^test_"
 (the_files = basename(dt$name))
-remove_prefix <- function(files = NULL, pattern = NULL) {
-    sub(pattern = pattern, replace = "", x = files)
-}
-remove_prefix(files=the_files,pattern= the_prefix)
+    
+## remove_prefix <- function(files = NULL, pattern = NULL) {
+##    sub(pattern = pattern, replace = "", x = files)
+##}
+remove_prefix(files=the_files,pattern= "^test_")  
+remove_prefix(files=the_files,pattern= "^[[:digit:]]{2,6}_")
 
+# not work !
+# the_files |> remove_prefix(pattern="^text")
+
+}
