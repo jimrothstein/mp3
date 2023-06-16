@@ -4,8 +4,6 @@
 ##
 # -----------------------
 ## TODO:
-##  -   missed a .qmd file !
-##  -   remove anything non Base R
 # -----------------------
 # -----------------------
 #### base:: comands REF
@@ -90,5 +88,4 @@ f5
 
 
 
-file.rename(from= original,  to = f5)
-list.files(".")
+file.rename(from= original  to = f5)
