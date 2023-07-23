@@ -1,0 +1,119 @@
+##  00_main.R
+PURPOSE:  Use Base R functions to remove old prefix and replace with new.
+NOTE:     Use lists, not tibble
+
+TODO:
+  -   missed a .qmd file !
+  -   remove anything non Base R
+
+```{css}
+/* class.output */
+
+.output-style {
+  background: #A2CD5A;
+  border-bottom: solid; 
+
+}
+```
+
+```{r, echo=F, eval=F}
+## something here kills output-style
+knitr::opts_chunk$set(echo=T,
+      class.output = "output-style",
+                  comment= "##",
+                  collapse = T)
+```
+
+```{r, echo=F, eval=T}
+## something here kills output-style
+knitr::opts_chunk$set(class.output = "output-style")
+```
+base:: comands REF
+```{r , echo=F}
+{
+    if (F) {
+        list.files(".")
+        file.rename()
+        file.create()
+        basename()
+        dirname()
+        list.dirs()
+        dir()
+    }
+}
+```
+
+##  Get list of files and save in different env
+```{r class.output = "output-style" }
+the_dir = "./test"
+f1 = list.files(the_dir)
+f1
+
+##  save
+old = new.env()
+old$f1 = f1
+```
+
+##    Patterns to find problem files
+```{r, echo = F, eval=F, class.output = "output-style"}
+
+## char[]
+f1[grep(x= f1, pattern="^[[:digit:]]")]
+pattern = "^test"
+f1[grep(x= f1, pattern=pattern)]
+```
+```{r}
+## grep files each time
+#   all.files = F , ignore hidden files
+#list.files(path=the_dir, all.files=F, pattern="^[[:digit:]]")
+#list.files(path=the_dir, all.files=F, pattern="^[m]")
+
+the_pattern="^[0-9]{2,4}"
+#the_pattern="^test"
+
+list.files(path=the_dir ,
+        pattern=the_pattern,
+        all.files = F 
+        )
+
+
+## Use char[]
+f2 = sub(f1, pattern = "^test_", replacement="" )
+
+f2
+f3 = sub(f2, pattern = "^[[:digit:]]{2,6}_", replacement = "")
+f3
+
+
+## Keep only R files 
+f4 = f3[grep(f3, pattern="\\.R$")]
+f4
+
+original = f1[grep(f1, pattern="\\.R$")]
+original
+```
+
+## Remove prefix
+```{r, eval=F, class.output = "output-style"}
+remove_prefix(files=the_files,pattern= "^test_")  
+remove_prefix(files=the_files,pattern= "^[[:digit:]]{2,6}_")
+```
+## New prefix
+```{r, echo=F,  eval=T}
+## new prefix, uses length of f3
+prefix = seq_along(f4) * 10
+ prefix  <- sprintf("%04i_", prefix) 
+prefix 
+```
+
+## Proposed new file name
+```{r}
+f5 = paste0(prefix, f4)
+f5
+```
+
+```{r eval=F}
+
+file.rename(from= original,  to = f5)
+list.files(path=the_dir)
+```
