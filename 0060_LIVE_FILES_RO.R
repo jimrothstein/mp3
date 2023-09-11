@@ -1,6 +1,6 @@
 
-file <- "tests/testthat/test_MP3_TESTING.R"
 
+## TEST files:   ../test
 ## PURPOSE:   
   *  Actual mp3 files. 
   *  Can TEST all you want.
@@ -27,7 +27,8 @@ file <- "tests/testthat/test_MP3_TESTING.R"
   library(tinytest)
   library(data.table)
 
-  the_dir  <- "~/mp3_files"
+#  the_dir  <- "~/mp3_files"
+    the_dir  <- "test"
   the_files  <- list.files(the_dir)
 
 ##	make backup
@@ -37,15 +38,14 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 
 ##  Put into data.table
 {
-    dt  <- get_file_names()
-		str(dt)
+    dt  <- data.table(fles=list.files(the_dir))
 		dt |> head()
 }
 
 
 ##	order in decreasing size
 {
-	dt1  <- setkey(dt, size)
+#	dt1  <- setkey(dt, size)
 	str(dt1)
 	tables()
 	#View(dt1[order(-size)])
@@ -64,6 +64,7 @@ file <- "tests/testthat/test_MP3_TESTING.R"
 }
 problems("abc")
 problems("^_")
+problems("^0")
 
 {
   # p.1 first set of problems
