@@ -21,7 +21,9 @@ Main idea is this:
   * prepend the dir
   * file.rename(old, new)
 
+# -------------------
 #### base:: comands
+# -------------------
 file.rename()   # NO WRITING in this file!
 file.create()
 basename()
@@ -209,13 +211,16 @@ pat  <-  "([[:digit:]]{4})_([[:digit:]]{2})_([[:digit:]]{2})"
 
 
 
-####    precedes (?<=)
+# ----------------------
+####    EXAMPLES: precedes (?<=)
+# ----------------------
 {
 #  letter o (1 or more) preceded by f 
     x  <- c("foo","boo", "faa", "fstool", "fo", "foooo")
     grep(x, pattern="(?<=f)(o+)", value = T, perl=T)
 
     sub(x=x, pattern="(?<=f)(o+)", replacement="X", perl=T)
+# [1] "fX"     "boo"    "faa"    "fstool" "fX"     "fX"    
 }
 
   x  <- "foo"
@@ -254,6 +259,7 @@ pat  <-  "([[:digit:]]{4})_([[:digit:]]{2})_([[:digit:]]{2})"
 #  call| tinytest::expect_identical(ans, "/ABD'") 
 
 }
+
 
 #### sprintf has some nice features!
 {
