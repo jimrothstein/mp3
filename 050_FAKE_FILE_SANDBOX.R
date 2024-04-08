@@ -2,11 +2,17 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 #   TAGS:  tinytest,
 
 
+# --------------------------------------------
 ## PURPOSE:   Test Renaming files in sandbox
+##            safely play!
+# --------------------------------------------
 ## USES:  tinytest
 ## setup
 ## create tmpdir and empty tempfile
 ##
+# ------------------
+##  Create Sandbox
+# ------------------
 {
   load_all()
   library(tinytest)
@@ -24,7 +30,10 @@ file <- "/home/jim/code/jimTools/tests/testthat/test_change_file_names.R"
 }
 
 {
+# -------------------------------
 ##  populate sandbox with files
+##  WHAT files?
+# -------------------------------
 
   # get_files, as DT (TODO add check)
     the_files  <- get_file_names()

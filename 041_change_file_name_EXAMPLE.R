@@ -1,5 +1,6 @@
 
 TODO
+
 2024-04-08
 -   put into function;
 -   add tmp dir and tests?
@@ -10,7 +11,8 @@ TODO
 #   current setup
 # -----------------
 # dir <- "~/code/try_things_here/BASE/"
-dir <- "~/code/try_things_here/envir/"
+#dir <- "~/code/try_things_here/envir/"
+dir  <-  "~/code/mp3/"
 list.files(dir)
 
 # ------------------------------------------------

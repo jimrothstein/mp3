@@ -1,7 +1,7 @@
 # TAGS:     sprintf, regex, mp3, DT,
 #
 #
-# PURPOSE:   Sort mp3 file names, by name, by size
+# PURPOSE:   Sort mp3 file names, by name, by size, using data.table
 # USE CASE:  Find dupicate files, histogram by size.
 #
 # THIS FILE:

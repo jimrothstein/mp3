@@ -27,7 +27,9 @@ f1 = list.files(the_dir)
 f1
 
 
-##  save
+# --------
+##  save in new envir
+# --------
 old = new.env()
 old$f1 = f1
 
